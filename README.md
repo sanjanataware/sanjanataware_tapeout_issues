@@ -20,7 +20,7 @@ The [Sodor project](https://github.com/ucb-bar/riscv-sodor) provides multiple pi
 
 - "bus"-based micro-coded implementation
 
-As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submisson is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
+As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submission is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
 
 Later you will add peripherals, run verification, and take the Sodor RTL through physical-design (PD) flows in Sky130 to tapeout.
 
@@ -30,7 +30,7 @@ We will now set up your Forge environment.
 
 **(1) Make sure you know your instructional account login.**
 
-*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main).. Review that lab if you need a refresher on using instructional machines.)*
+*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main). Review that lab if you need a refresher on using instructional machines.)*
 
 If you are formally enrolled, you should have a 151T account. Else you may need to generate an instructional account:
 
@@ -46,7 +46,7 @@ You can check which machines are available at: [https://hivemind.eecs.berkeley.e
 
 **(2) Login to a lab machine over SSH.**
 
-*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main).. Review that lab if you need a refresher on using instructional machines.)*
+*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main). Review that lab if you need a refresher on using instructional machines.)*
 
 Note: If you are off-campus (or off the EECS network), you may need to use the GlobalProtect VPN for these steps.
 
@@ -159,6 +159,8 @@ Glance at the following for quality of life improvements:
 
 - Documentation on Pixi shell integration and how to enable shell completions (helps with activation, command completion, and nicer interactive use): https://pixi.prefix.dev/latest/advanced/pixi_shell/#shell-completions
 
+Make sure you run ```pixi shell``` every time! Just like running conda activate.
+
 **(3)** **Initiate submodules.** 
 
 Initialize all repository submodules with:
@@ -221,13 +223,31 @@ Verify `spike` resolves to the expected path (the Pixi environment’s riscv-too
 which spike # should resolve to ${forge}/.pixi/envs/default/riscv-tools/bin/spike
 ```
 
-### Install FESVR
+### Build FESVR
 
 For now, Forge uses an older, compatible FESVR fork. 
 
-Clone/build/install our forked FESVR following instructions at: [https://github.com/ucb-eecs151tapeout/riscv-fesvr-sodor](https://github.com/ucb-eecs151tapeout/riscv-fesvr-sodor)
+**(1)**
 
-It'll install it over the FESVR installed by `riscv-isa-sim` so the simulator and emulator use the correct FESVR version.
+Enter the `riscv-fesvr` tree and create a build directory: 
+
+```bash
+cd ${forge}/tools/riscv-fesvr
+
+mkdir build
+
+cd build
+```
+
+**(2)**
+
+Configure, build, and install:
+
+```bash
+../configure --prefix=$RISCV
+
+make install
+```
 
 ### Build and install RISC-V Tests
 
