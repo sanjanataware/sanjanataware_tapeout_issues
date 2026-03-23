@@ -20,7 +20,7 @@ The [Sodor project](https://github.com/ucb-bar/riscv-sodor) provides multiple pi
 
 - "bus"-based micro-coded implementation
 
-As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submisison is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
+As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submisson is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
 
 Later you will add peripherals, run verification, and take the Sodor RTL through physical-design (PD) flows in Sky130 to tapeout.
 
