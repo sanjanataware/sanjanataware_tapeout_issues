@@ -20,7 +20,7 @@ The [Sodor project](https://github.com/ucb-bar/riscv-sodor) provides multiple pi
 
 - "bus"-based micro-coded implementation
 
-As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submisison is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
+As the Lab 2 deliverable, you will run through the repository setup. Then you will run existing assembly (RISC-V) tests on the Sodor core. Your submission is the core passing all tests. Staff will work in parallel to provide guidance for the follow-up tasks, currently listed as "next steps," but you're welcome to jump ahead. 
 
 Later you will add peripherals, run verification, and take the Sodor RTL through physical-design (PD) flows in Sky130 to tapeout.
 
@@ -30,7 +30,7 @@ We will now set up your Forge environment.
 
 **(1) Make sure you know your instructional account login.**
 
-*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main).. Review that lab if you need a refresher on using instructional machines.)*
+*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main). Review that lab if you need a refresher on using instructional machines.)*
 
 If you are formally enrolled, you should have a 151T account. Else you may need to generate an instructional account:
 
@@ -46,7 +46,7 @@ You can check which machines are available at: [https://hivemind.eecs.berkeley.e
 
 **(2) Login to a lab machine over SSH.**
 
-*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main).. Review that lab if you need a refresher on using instructional machines.)*
+*(These instructions are very similar to [EECS151 Lab 1](https://github.com/EECS150/asic-labs-sp24/tree/main). Review that lab if you need a refresher on using instructional machines.)*
 
 Note: If you are off-campus (or off the EECS network), you may need to use the GlobalProtect VPN for these steps.
 
@@ -159,6 +159,8 @@ Glance at the following for quality of life improvements:
 
 - Documentation on Pixi shell integration and how to enable shell completions (helps with activation, command completion, and nicer interactive use): https://pixi.prefix.dev/latest/advanced/pixi_shell/#shell-completions
 
+Make sure you run ```pixi shell``` every time! Just like running conda activate.
+
 **(3)** **Initiate submodules.** 
 
 Initialize all repository submodules with:
@@ -221,13 +223,31 @@ Verify `spike` resolves to the expected path (the Pixi environment’s riscv-too
 which spike # should resolve to ${forge}/.pixi/envs/default/riscv-tools/bin/spike
 ```
 
-### Install FESVR
+### Build FESVR
 
 For now, Forge uses an older, compatible FESVR fork. 
 
-Clone/build/install our forked FESVR following instructions at: [https://github.com/ucb-eecs151tapeout/riscv-fesvr-sodor](https://github.com/ucb-eecs151tapeout/riscv-fesvr-sodor)
+**(1)**
 
-It'll install it over the FESVR installed by `riscv-isa-sim` so the simulator and emulator use the correct FESVR version.
+Enter the `riscv-fesvr` tree and create a build directory: 
+
+```bash
+cd ${forge}/tools/riscv-fesvr
+
+mkdir build
+
+cd build
+```
+
+**(2)**
+
+Configure, build, and install:
+
+```bash
+../configure --prefix=$RISCV
+
+make install
+```
 
 ### Build and install RISC-V Tests
 
@@ -313,31 +333,10 @@ Waveforms (such as VCD) let you trace signals (fetch/decode/execute stages, regi
 
 We will look more at waveforms later.
 
-# Known Problems
+# Known Problems and Next Steps (WIP)
 
-Please let us know if you run into issues, any steps to debug them, and solutions! 
+Please refer to the issues page of this repo for action items and ways to contribute! If you find any bugs/solutions/new features, feel free to take on anything or add to the list.
 
-* sodor uses a custom reset -- by writing to 0x44
-   * https://github.com/riscv-software-src/riscv-isa-sim/blob/90a04da3f9235e17ab456b9263080f2dc32e4f1e/fesvr/dtm.cc 
-   * this should get updated so that sodor supports resuming execution from `0x7b1` (dpc) [spec compliant] after coming out of debug mode.
-
-
-* cannot build riscv bmark test in rv32 due to ucb-bar riscv toolchain (feedstock) not supporting multi-lib - https://github.com/ucb-bar/riscv-tools-feedstock/pull/8 and the lack of a rv32 toolchain thats been compiled from source (cs152 has one, but ideally we don't depend on that, and we build from scratch)
-
-
-* when run it creates a bunch of "rv32_2stage", "rv32_1stage" etc folders in `${forge}/generators/riscv-sodor/rv32_1stage`.. these shouldnt be made, its done somewhere in the makefile
-
-# Next Steps (WIP)
-
-We will release more instructions, but as this is a collaborative effort, we're very transparent about the directions as we define them, and welcome your own tackling of these and other problems! 
-
-Things that need to be done before tapeout:
-
-* jtag TAP to DMI unit - https://chipyard.readthedocs.io/en/stable/Advanced-Concepts/Chip-Communication.html
-* replace 3 stage's 1 cycle mem w/ srams
-* IO
-* bump to chisel 3, java 17 or smth, not java 8 (1.8.0), bump scala version from 2.12 to latest CY version
-* whats the modern version of chisel-iotesters? move to that
-* figure out the custom reset/custom fesvr (to write to 0x44 to start exec) situation, and whether its even viable to keep that around?? (will we successfully bringup if its like that)
+More instructions will be released later on, but as this is a collaborative effort, we're very transparent about the directions as we define them, and welcome your own tackling of these and other problems!
 
 We would like to also establish the foundation: you learn where the RTL comes from (Chisel elaboration), how the pipeline and memory/CSR interfaces are structured, and how to correlate the design with the generated SystemVerilog. Without that familiarity, debugging the RTL, integrating peripherals, and interpreting PD/simulation results would be much harder. Treat this as the “get to know the core" step before verification and tapeout.
