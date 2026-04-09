@@ -15,7 +15,7 @@ technology.sky130:
   stdcell_library: "sky130_fd_sc_hd"
 
 technology.core.stackup: "sky130_fd_sc_hd"
-vlsi.technology.placement_site: "CoreSite"
+vlsi.technology.placement_site: "unithd"
 
 vlsi.core.sram_generator_tool: "hammer.technology.sky130.sram_compiler"
 vlsi.inputs.sram_parameters: "hammer/hammer/technology/sky130/sram-cache.json"
