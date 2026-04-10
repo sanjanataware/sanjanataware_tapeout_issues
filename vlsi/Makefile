@@ -21,6 +21,10 @@ tech_dir           ?= $(if $(filter $(tech_name),sky130 asap7 nangate45),\
 SMEMS_COMP         ?= $(tech_dir)/sram-compiler.json
 SMEMS_CACHE        ?= $(tech_dir)/sram-cache.json
 SMEMS_HAMMER       ?= $(build_dir)/$(long_name).mems.hammer.json
+SRAM_CACHE_SCRIPT  ?= $(vlsi_dir)/hammer/hammer/technology/sky130/extra/sram22/sram-cache-gen.py
+AVAILABLE_SRAM_CACHE ?= $(OBJ_DIR)/available-sram-cache.json
+SRAM_CACHE_CONF    ?= $(OBJ_DIR)/available-sram-cache.yml
+SRAM22_MACROS      ?= /home/ff/ee198/ee198-20/sky130_col/sram22_sky130_macros
 
 ifdef USE_SRAM_COMPILER
 	TOP_MACROCOMPILER_MODE ?= -l $(SMEMS_COMP) --use-compiler -hir $(SMEMS_HAMMER) --mode strict
@@ -72,13 +76,14 @@ all: drc lvs
 MK_TARGET_PROC ?= rv32_5stage
 RTL_TARGET_DIR = $(vlsi_dir)/build/$(MK_TARGET_PROC)-rtl
 SODOR_TOP_V = $(RTL_TARGET_DIR)/Top.v
-
+SODOR_VSRCS = $(wildcard $(base_dir)/generators/riscv-sodor/vsrc/*.sv) \
+              $(wildcard $(base_dir)/generators/riscv-sodor/vsrc/*.v)
 # Trigger Sodor elaboration directly via sbt
-$(SODOR_TOP_V):
+$(SODOR_TOP_V): $(SODOR_VSRCS)
 	mkdir -p $(RTL_TARGET_DIR)
 	cd $(base_dir)/generators/riscv-sodor && sbt "project $(MK_TARGET_PROC)" "runMain Sodor.elaborate --target-dir $(RTL_TARGET_DIR)"
 	cp $(base_dir)/generators/riscv-sodor/vsrc/*.sv $(RTL_TARGET_DIR)/ 2>/dev/null || true
-	cp $(base_dir)/generators/riscv-sodor/vsrc/*.v $(RTL_TARGET_DIR)/ 2>/dev/null || true
+	cp $(base_dir)/generators/riscv-sodor/vsrc/sram22_2048x32m8w8.stub.v $(RTL_TARGET_DIR)/ 2>/dev/null || true
 
 #########################################################################################
 # srams
@@ -91,23 +96,27 @@ SRAM_CONF=$(OBJ_DIR)/sram_generator-output.json
 srams: sram_generator
 sram_generator: $(SRAM_CONF)
 
-# This should be built alongside $(TOP_SMEMS_FILE)
-# $(SMEMS_HAMMER): $(TOP_SMEMS_FILE)
+$(AVAILABLE_SRAM_CACHE): $(SRAM_CACHE_SCRIPT)
+	mkdir -p $(dir $@)
+	python3 $(SRAM_CACHE_SCRIPT) $(SRAM22_MACROS) $@
 
-# $(SRAM_GENERATOR_CONF): $(SMEMS_HAMMER)
-# 	mkdir -p $(dir $@)
-# 	echo "vlsi.inputs.sram_parameters: '$(SMEMS_HAMMER)'" > $@
-# 	echo "vlsi.inputs.sram_parameters_meta: [\"transclude\", \"json2list\"]" >> $@
+$(SRAM_CACHE_CONF): $(AVAILABLE_SRAM_CACHE)
+	mkdir -p $(dir $@)
+	echo "vlsi.inputs.sram_parameters: \"$(AVAILABLE_SRAM_CACHE)\"" > $@
+	echo "vlsi.inputs.sram_parameters_meta: [\"transclude\", \"json2list\"]" >> $@
 
-# $(SRAM_CONF): $(SRAM_GENERATOR_CONF)
-# 	cd $(vlsi_dir) && $(HAMMER_EXEC) -e $(ENV_YML) $(foreach x,$(INPUT_CONFS) $(SRAM_GENERATOR_CONF), -p $(x)) --obj_dir $(build_dir) sram_generator
-# 	cd $(vlsi_dir) && cp output.json $@
+$(SRAM_GENERATOR_CONF): $(SRAM_CACHE_CONF)
+	mkdir -p $(dir $@)
+	echo "# SRAM generator uses the installed SRAM22 inventory via $(SRAM_CACHE_CONF)" > $@
+
+$(SRAM_CONF): $(SYN_CONF) $(SRAM_CACHE_CONF) $(SRAM_GENERATOR_CONF)
+	cd $(vlsi_dir) && $(HAMMER_EXEC) -e $(ENV_YML) $(foreach x,$(INPUT_CONFS) $(SRAM_CACHE_CONF) $(SYN_CONF) $(SRAM_GENERATOR_CONF), -p $(x)) --obj_dir $(OBJ_DIR) -o $@ sram_generator
 
 #########################################################################################
 # synthesis input configuration
 #########################################################################################
 SYN_CONF = $(OBJ_DIR)/inputs.yml
-GENERATED_CONFS = $(SYN_CONF)
+GENERATED_CONFS = $(SYN_CONF) $(SRAM_CONF)
 
 $(SYN_CONF): $(SODOR_TOP_V)
 	mkdir -p $(dir $@)

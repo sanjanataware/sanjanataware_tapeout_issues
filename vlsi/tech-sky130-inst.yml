@@ -10,7 +10,7 @@ technology.sky130:
   sky130_cds: "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.9"
   sky130_cds_die_collateral: "/home/ff/ee198/ee198-20/sky130_col/sky130_die_collateral_1.0"
   drc_deck_sources: [
-    "$SKY130_CDS/Sky130_DRC/sky130_rev_0.0_2.10.drc.pvl", # TODO: change to 2.12
+    "/home/ff/ee198/ee198-20/sky130_col/sky130_release_0.0.9/Sky130_DRC/sky130_rev_0.0_2.10.drc.pvl", # TODO: change to 2.12
   ]
   stdcell_library: "sky130_fd_sc_hd"
 
