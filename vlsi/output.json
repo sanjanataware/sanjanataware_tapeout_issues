@@ -1,0 +1,23 @@
+{
+    "vlsi.builtins.is_complete": false,
+    "par.outputs.output_ilms": [],
+    "par.outputs.output_ilms_meta": "append",
+    "vlsi.inputs.ilms": [],
+    "vlsi.inputs.ilms_meta": "append",
+    "par.outputs.output_gds": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.gds",
+    "par.outputs.output_netlist": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.lvs.v",
+    "par.outputs.output_sim_netlist": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.sim.v",
+    "par.outputs.hcells_list": [],
+    "par.outputs.seq_cells": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/find_regs_cells.json",
+    "par.outputs.all_regs": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/find_regs_paths.json",
+    "par.inputs.input_files": [
+        "/scratch/lsh/151t-forge/vlsi/build/SodorTile/syn-rundir/SodorTile.mapped.v"
+    ],
+    "par.inputs.top_module": "SodorTile",
+    "par.outputs.sdf_file": "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.par.sdf",
+    "par.outputs.spefs": [
+        "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.ss_100C_1v60.par.spef",
+        "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.ff_n40C_1v95.par.spef",
+        "/scratch/lsh/151t-forge/vlsi/build/SodorTile/par-rundir/SodorTile.tt_025C_1v80.par.spef"
+    ]
+}

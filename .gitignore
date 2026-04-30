@@ -10,3 +10,7 @@ project/
 # pixi environments
 .pixi/*
 !.pixi/config.toml
+
+vlsi/build/*
+vlsi/hammer-vlsi*.log
+vlsi/output.json
