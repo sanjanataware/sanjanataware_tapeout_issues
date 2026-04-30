@@ -837,3 +837,22 @@ It is common practice to make a slide deck as you start physical design to docum
 
 # Actionables 
 
+This is a lot of information! You will likely encounter this lab again at the beginning of `EE194`, the advanced tapeout class, if you wish to take it, but the info there will refer to the more advanced Intel or TSMC rules. For now, it's OK to only have a surface level understanding of what is happening. Start getting familiar with the terms and process but don't feel mandated to absorb and execute every single step.
+
+Instead, follow this very simplified flow to run synthesis and place-and-route:
+
+```
+git fetch origin`
+git checkout hammer 
+cd generators/riscv-sodor 
+git checkout srams 
+cd ../../vlsi 
+make syn ./build/par-rundir/generated_scripts/open_chip
+make par ./build/par-rundir/generated_scripts/open_chip
+```
+
+Then open Innovus and take a screenshot. That's it, you have your first design draft! 
+If you wish to continue designing - you will need to do this many times again - and then fix the errors that pop up. 
+But for now, just submit the screenshot on Gradescope. :)  
+
+**Congratulations!~**
