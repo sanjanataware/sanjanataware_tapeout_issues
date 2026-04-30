@@ -5,6 +5,10 @@ srcDir          := $(abspath ../../generators/riscv-sodor)
 fesvrDir        := $(abspath ../../tools/riscv-fesvr)
 buildLibDir     := $(RISCV)/lib
 buildDir        := $(abspath ./build)
+SRAM22_DIR      ?= /home/ff/ee198/ee198-20/sky130_col/sram22_sky130_macros/sram22_2048x32m8w8
+SRAM22_V        ?= $(SRAM22_DIR)/sram22_2048x32m8w8.v
+SRAM22_BASE     ?= /home/ff/ee198/ee198-20/sky130_col/sram22_sky130_macros
+SRAM_CACHE_GEN  := $(abspath ../../vlsi/hammer/hammer/technology/sky130/extra/sram22/sram-cache-gen.py)
 
 CXX := g++
 SBT := sbt $(SBT_FLAGS)
@@ -25,11 +29,13 @@ ifneq ($(which_disasm),)
 endif
 
 MK_TARGET_PROC ?= rv32_1stage
-
+SODOR_ASYNC_SIM ?= 0
 
 generated_dir = $(buildDir)/generated-src/${MK_TARGET_PROC}
 
 rtl: $(generated_dir)/Top.v
+TOP_V := $(generated_dir)/Top.v
+EXTRA_V :=
  
 # ifneq ($(shell which pkg-config),)
 # 	ifneq ($(shell pkg-config --variable=includedir verilator),)
@@ -101,7 +107,7 @@ $(generated_dir)/Top.v: \
   $(wildcard $(srcDir)/src/common/*.scala) \
   $(wildcard $(srcDir)/src/$(MK_TARGET_PROC)/*.scala)
 	mkdir -p $(buildDir)/generated-src/$(MK_TARGET_PROC)
-	cd $(srcDir) && $(SBT) "project $(MK_TARGET_PROC)" "run --target-dir $(buildDir)/generated-src/$(MK_TARGET_PROC)"
+	cd $(srcDir) && SODOR_ASYNC_SIM=$(SODOR_ASYNC_SIM) $(SBT) "project $(MK_TARGET_PROC)" "run --target-dir $(buildDir)/generated-src/$(MK_TARGET_PROC)"
 
 # $(addsuffix .o,$(CXXSRCS)): %.o: $(srcDir)/sim/%.cc
 # 	$(CXX) $(CXXFLAGS) -I${VERILATOR_INCLUDE} -c -o $@ $<
@@ -124,14 +130,14 @@ VERILATOR_FLAGS := --top-module Top \
   -I$(srcDir)/vsrc \
   -Mdir $(buildDir)/obj_dir \
   -O3 -CFLAGS "$(CXXFLAGS) $(LDFLAGS) -DVERILATOR -include $(srcDir)/sim/verilator.h"
-emulator: $(generated_dir)/Top.v $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v
+emulator: $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
 	$(VERILATOR) $(VERILATOR_FLAGS) \
-	-o $(buildDir)/$@ $< $(srcDir)/vsrc/SimDTM.v -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
+	-o $(buildDir)/$@ $< $(EXTRA_V) $(srcDir)/vsrc/SimDTM.v $(SRAM22_V) -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
 	$(MAKE) -C $(buildDir)/obj_dir -f VTop.mk
 
-emulator-debug: $(generated_dir)/Top.v $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v
+emulator-debug: $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
 	$(VERILATOR) $(VERILATOR_FLAGS) --trace \
-	-o $(buildDir)/$@ $< $(srcDir)/vsrc/SimDTM.v -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
+	-o $(buildDir)/$@ $< $(EXTRA_V) $(srcDir)/vsrc/SimDTM.v $(SRAM22_V) -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
 	$(MAKE) -C $(buildDir)/obj_dir -f VTop.mk
  
 clean:
@@ -257,4 +263,3 @@ run-bmarks-test-debug: $(addprefix output/, $(addsuffix .riscv.vcd, $(global_bma
 run: run-asm-tests run-bmarks-test
 run-debug: run-asm-tests-debug run-bmarks-test-debug
 run-fast: $(addprefix output/, $(addsuffix .run, $(global_asm_tests) $(global_bmarks)))
-

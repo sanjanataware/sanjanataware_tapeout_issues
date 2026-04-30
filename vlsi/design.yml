@@ -1,0 +1,211 @@
+# Generate Make include to aid in flow
+vlsi.core.build_system: make
+
+# TODO: temporary
+technology.sky130.drc_blackbox_srams: true
+technology.sky130.lvs_blackbox_srams: true
+
+# Hammer will auto-generate a CPF for simple power designs; see hammer/src/hammer-vlsi/defaults.yml for more info
+vlsi.inputs.power_spec_mode: auto
+vlsi.inputs.power_spec_type: cpf
+# Power Straps
+par.power_straps_mode: generate
+par.generate_power_straps_method: by_tracks
+par.blockage_spacing: 2.0
+par.blockage_spacing_top_layer: met3
+par.generate_power_straps_options:
+  by_tracks:
+    strap_layers:
+      - met2
+      - met3
+      - met4
+      - met5
+    pin_layers:
+      - met5
+    blockage_spacing_met2: 4.0
+    blockage_spacing_met4: 2.0
+    track_width: 2
+    track_width_met2: 2
+    track_width_met3: 2
+    track_width_met4: 2
+    track_width_met5: 2
+    track_spacing: 5
+    track_start: 10
+    track_start_met5: 1
+    power_utilization: 0.4
+    power_utilization_met4: 0.4
+    power_utilization_met5: 0.5
+
+
+vlsi.inputs:
+  power_spec_type: cpf
+  # power_spec_mode: manual
+  # power_spec_contents_meta: transclude
+  # power_spec_contents: ./ofo.cpf
+  power_spec_mode: auto
+  supplies:
+    # Hammer should only know about the main core power nets
+    # Other pins/nets/domains handled in CPF
+    power:
+      - {name: "VDD",  pins: ["VDD"]}
+    ground:
+      - {name: "VSS",  pins: ["VSS"]}
+    VDD: "1.8 V"
+    GND: "0 V"
+
+  top_module: ChipTop
+
+  # clocks:
+  #   # primary clock (for all TL busses)
+  #   - {name: "clock", path: "clock", period: "200ns", uncertainty: "0.1ns"}
+  #   # serial tl clock
+  #   - {name: "tl_clock", path: "iocell_serial_tl_0_clock_in/iocell/IN", period: "200ns", uncertainty: "0.1ns"}
+  #   # jtag clock
+  #   - {name: "jtag_TCK", path: "iocell_jtag_TCK/iocell/IN", period: "200ns", uncertainty: "1ns"}
+
+
+  placement_constraints:
+    - path: SodorTile
+      type: toplevel
+      x: 0
+      y: 0
+      width: 2000
+      height: 2000
+      margins: {left: 100, right: 100, top: 100, bottom: 100}
+    # SRAM22 scratchpad banks for Sodor. These are fixed explicitly so PAR sees
+    # legal hardmacro locations inside the core instead of trying to auto-place
+    # them off-grid/out-of-bounds.
+    - path: "SodorTile/memory/mem/sram_dmem_0"
+      type: hardmacro
+      x: 120.0
+      y: 120.0
+      orientation: r0
+    - path: "SodorTile/memory/mem/sram_dmem_1"
+      type: hardmacro
+      x: 120.0
+      y: 951.92
+      orientation: r0
+    - path: "SodorTile/memory/mem/sram_imem_0"
+      type: hardmacro
+      x: 844.48
+      y: 120.0
+      orientation: r0
+    - path: "SodorTile/memory/mem/sram_imem_1"
+      type: hardmacro
+      x: 844.48
+      y: 951.92
+      orientation: r0
+  #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_1_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+  #     type: hardmacro
+  #     x: 500
+  #     y: 1550
+  #     orientation: my90
+  #     top_layer: met2
+  #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_data_arrays_0_0/rockettile_icache_data_arrays_0_0_ext/mem_0_0"
+  #     type: hardmacro
+  #     x: 500
+  #     y: 855
+  #     orientation: my90
+  #     top_layer: met2
+  #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/data/rockettile_dcache_data_arrays_0/rockettile_dcache_data_arrays_0_ext/mem_0_0"
+  #     type: hardmacro
+  #     x: 500
+  #     y: 2151
+  #     orientation: my90
+  #     top_layer: met2
+  #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/dcache/rockettile_dcache_tag_array_0/rockettile_dcache_tag_array_0_ext/mem_0_0"
+  #     type: hardmacro
+  #     x: 500
+  #     y: 3076
+  #     orientation: my90
+  #     top_layer: met2
+  #   - path: "ChipTop/system/tile_prci_domain/element_reset_domain_rockettile/frontend/icache/rockettile_icache_tag_array_0/rockettile_icache_tag_array_0_ext/mem_0_0"
+  #     type: hardmacro 
+  #     x: 1250
+  #     y: 3076
+  #     orientation: my90
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram0"
+  #     type: hardmacro
+  #     x: 1812.51
+  #     y: 2357.62
+  #     orientation: r270
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/meta_sram"
+  #     type: hardmacro
+  #     x: 2457.535
+  #     y: 3170.31
+  #     orientation: r270
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/meta_sram"
+  #     type: hardmacro
+  #     x: 1935.21
+  #     y: 3070.31
+  #     orientation: r270
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram1"
+  #     type: hardmacro
+  #     x: 1812.51
+  #     y: 1794.895
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram2"
+  #     type: hardmacro
+  #     x: 1812.51
+  #     y: 1222.47
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/dcache/sram3"
+  #     type: hardmacro
+  #     x: 1812.51
+  #     y: 659.745
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram0"
+  #     type: hardmacro
+  #     x: 2457.535
+  #     y: 2457.62
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram1"
+  #     type: hardmacro
+  #     x: 2457.535
+  #     y: 1894.895
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram2"
+  #     type: hardmacro
+  #     x: 2457.535
+  #     y: 1322.47
+  #     orientation: r270
+  #
+  #
+  #   - path: "ChipTop/system/tile_prci_domain_1/element_reset_domain_shadow_council_core/core/mem/icache/sram3"
+  #     type: hardmacro
+  #     x: 2457.535
+  #     y: 759.745
+  #     orientation: r270
+  #
+  #
+  # # for the por
+  #   - path: ChipTop/system
+  #     type: obstruction
+  #     obs_types: [power, place, route]
+  #     layers: [met1]
+  #     x: 3243
+  #     y: 252
+  #     width: 34
+  #     height: 48
+
+design.def.hv_routing_meta: prependlocal
+design.def.hv_routing: ofo-hv-routing.def
+
+
+vlsi.inputs.dont_use_mode: append
+vlsi.inputs.dont_use_list_meta: append
+vlsi.inputs.dont_use_list:
+  - sky130_fd_sc_hvl__*

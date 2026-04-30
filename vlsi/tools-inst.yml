@@ -1,0 +1,50 @@
+vlsi.core.build_system: make
+# Genus options
+vlsi.core.synthesis_tool: "hammer.synthesis.genus"
+synthesis.genus.version: "211"
+synthesis.genus.genus_bin: "/share/instsww/cadence/GENUS211/bin/genus"
+
+# Innovus options
+vlsi.core.par_tool: "hammer.par.innovus"
+par.innovus.version: "211"
+par.innovus.innovus_bin: "/share/instsww/cadence/INNOVUS211/bin/innovus"
+par.innovus.design_flow_effort: "standard"
+par.inputs.gds_merge: true
+# Pegaus options, cadence pdk only has a pegasus deck
+vlsi.core.drc_tool: "hammer.drc.pegasus"
+drc.pegasus.version: "221"
+drc.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
+vlsi.core.lvs_tool: "hammer.lvs.pegasus"
+lvs.pegasus.pegasus_bin: "/share/instsww/cadence/PEGASUS221/bin/pegasus"
+lvs.pegasus.version: "221"
+# VCS options
+vlsi.core.sim_tool: "hammer.sim.vcs"
+sim.vcs.version: "T-2022.06-SP2-9"
+sim.vcs.vcs_bin: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/bin/vcs"
+sim.vcs.vcs_home: "/share/instsww/synopsys-new/vcs/T-2022.06-SP2-9/"
+sim.vcs.verdi_bin: "/share/instsww/synopsys-new/verdi/T-2022.06-SP2/bin/verdi"
+sim.vcs.verdi_home: "/share/instsww/synopsys-new/verdi/T-2022.06-SP2/"
+sim.outputs.waveforms: "/scratch/eecs251b-aae/chipyard/vlsi/output"
+# Voltus options
+vlsi.core.power_tool: "hammer.power.voltus"
+power.joules.version: "211"
+power.voltus.version: "211_ISR3"
+
+# Commercial tool licenses/paths
+# mentor.mentor_home: "/tools/mentor"
+# mentor.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"
+
+# cadence.cadence_home: "/tools/cadence"
+# cadence.CDS_LIC_FILE: "5280@bwrcflex-1.eecs.berkeley.edu:5280@bwrcflex-2.eecs.berkeley.edu"
+
+# synopsys.synopsys_home: "/tools/synopsys"
+# synopsys.SNPSLMD_LICENSE_FILE: "1701@bwrcflex-1.eecs.berkeley.edu:1701@bwrcflex-2.eecs.berkeley.edu"
+# synopsys.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"
+
+mentor.mentor_home: "/share/instsww/mgc"
+mentor.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"
+cadence.cadence_home: "/share/instsww/cadence/GENUS211"
+cadence.CDS_LIC_FILE: "5280@license-srv.eecs.berkeley.edu"
+synopsys.synopsys_home: "/share/instsww/synopsys-new/"
+synopsys.SNPSLMD_LICENSE_FILE: "27005@license-srv.eecs.berkeley.edu"
+synopsys.MGLS_LICENSE_FILE: "1717@bwrcflex-1.eecs.berkeley.edu:1717@bwrcflex-2.eecs.berkeley.edu"

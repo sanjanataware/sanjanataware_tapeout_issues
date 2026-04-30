@@ -842,8 +842,8 @@ This is a lot of information! You will likely encounter this lab again at the be
 Instead, follow this very simplified flow to run synthesis and place-and-route:
 
 ```
-git fetch origin`
-git checkout hammer 
+git fetch origin
+git pull origin main
 cd generators/riscv-sodor 
 git checkout srams 
 cd ../../vlsi 
@@ -853,6 +853,8 @@ make par ./build/par-rundir/generated_scripts/open_chip
 
 Then open Innovus and take a screenshot. That's it, you have your first design draft! 
 If you wish to continue designing - you will need to do this many times again - and then fix the errors that pop up. 
-But for now, just **submit the screenshot on Gradescope**. :)  
+But for now, just **submit the screenshot on \[Gradescope]**. :)  
 
 **Congratulations!~**
+
+You have now seen a little bit of what each step of an end-to-end SoC design flow looks like, from RTL to PD. What will you do next?~
