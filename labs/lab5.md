@@ -35,7 +35,7 @@ The big 3 EDA (Electronic Design Automation) companies are Cadence, Synopsys, an
 | DRC/LVS/Physical Verification | IC Validator | Pegasus | Calibre | Magic [Developed at Berkeley!], KLayout
 | Parasitic Extraction (PEX) & Signoff | [Synopsys Signoff](https://www.synopsys.com/implementation-and-signoff/signoff.html#products) | [Certus Closure Solution](https://www.cadence.com/en_US/home/resources/datasheets/cadence-certus-closure-solution-ds.html) (Includes Innovus, Pegasus, Quantus & Tempus) | Calibre | OpenRCX, KLayout
 
-\* Note about VCS: VCS is the simulator, the waveform viewer you may have used in EECS151 is called DVE (≠VCS). DVE is old, industry primarily now uses [Verdi](https://www.synopsys.com/verification/debug/verdi.html) for waveform viewing (photo [here](./Lab_5_assets_rewrite/verdi.png)) if they are in the Synopsys ecosystem for RTL simulation.
+\* Note about VCS: VCS is the simulator, the waveform viewer you may have used in EECS151 is called DVE (≠VCS). DVE is old, industry primarily now uses [Verdi](https://www.synopsys.com/verification/debug/verdi.html) for waveform viewing (photo [here](./assets_lab5/verdi.png)) if they are in the Synopsys ecosystem for RTL simulation.
 
 ^ Note about L-Edit: you might also see names such as Tanner L-Edit or Mentor L-Edit - They are the same thing.
 
@@ -50,7 +50,7 @@ First, a clarification: a PDK (Process Development Kit) typically includes the p
 To prevent any confusion, we will refer to **PDKs as the process primatives** and **Standard Cells as the digital standard cell library**.
 
 ## SkyWater 130nm Stackup
-<img src="./Lab_5_assets_rewrite/metal_stack.jpg" height="700px">
+<img src="./assets_lab5/metal_stack.jpg" height="700px">
 
 Every PDK has a document or drawing similar to the one above. It is a documentation from the foundry describing how materials (like Silicon, Oxides, Metals) are stacked up in that manufacturing process. It also contains specifications that dictate the thickness of each metal layer, the distance required between metal layers, etc.
 
@@ -63,32 +63,33 @@ You should start building this intuition so that when you see, for example, an e
 Additionally, developing the intuition that a chip is like a layered cake/city and that signals coming from the outside world will be introduced to the chip at higher metal layers and will need to be routed down through the metal layer stack to contact the transistors, and vice-versa -- signals from the transistors that need to travel to another part of the chip or to the outside world (off chip) will need to be moved up from the bottom of the chip (where the transistors are located) through the metal layers.
 
 <details>
-<summary>I tried including as much as I know about the acroymns in the photo here if you are curious:</summary>
-nwell -> section of the substrate that has been n-type doped
+<summary>If you are curious, here is some info about the acronyms:</summary>
 
-licon -> local interconnect contact
+`nwell` -> section of the substrate that has been n-type doped
 
-li -> local interconnect
+`licon` -> local interconnect contact
 
-mcon -> metal contect
+`li` -> local interconnect
 
-
-FOX K=3.9 -> Field Oxide (SiO2), Dielectric Constant = 3.9
-
-PSG -> Phosophosilicate Glass (Doped with phosphorus)
-
-SPNIT -> Silicon Nitride Spacer
-
-IOX -> I/O (aka: Gate) Oxide
+`mcon` -> metal contect
 
 
-(Take EE143 :P)
+`FOX K=3.9` -> Field Oxide (SiO2), Dielectric Constant = 3.9
+
+`PSG` -> Phosophosilicate Glass (Doped with phosphorus)
+
+`SPNIT` -> Silicon Nitride Spacer
+
+`IOX` -> I/O (aka: Gate) Oxide
+
+(Take EE143 to learn more! :p)
+
 </details>
 
 ## A Closer Look at the Standard Cells
 Standard Cells are the fundamental building blocks of a digital design containing fundemental logic blocks such as AND, NOT, OR gates, Clock Buffers, Muxes, etc. They are placed and connected up in a digital design to build the logic that you have described in your Verilog/Chisel.
 
-<img src="./Lab_5_assets_rewrite/std-cell-example-AND2X1.png" width="1200px">
+<img src="./assets_lab5/std-cell-example-AND2X1.png" width="1200px">
 
 Here is a SkyWater 130nm Standard Cell. This one in particular represents a 2-input AND gate (named: `AND2X1` -- do you remember seeing something like this in your EECS151 ASIC post-synthesis netlist?)
 
@@ -308,7 +309,7 @@ Physical Only cells do not appear on timing path reports and do not contain any 
 
 The files for these cells are available here: `/home/ff/ee198/ee198-20/sky130_col/sky130_scl_9T_0.1.2/sky130_scl_9T_tech` if you want to follow along.
 
-<img src="./Lab_5_assets_rewrite/sky130-phycell-example.png">
+<img src="./assets_lab5/sky130-phycell-example.png">
 
 #### **Antenna Diodes & The Antenna Effect:**
 * Antenna diodes are included to prevent the antenna effect that occures during fabrication.
@@ -317,13 +318,13 @@ The files for these cells are available here: `/home/ff/ee198/ee198-20/sky130_co
       * These unconnected metal lines will sit there and collect charge throughout the manufacturing process.
       * Charge built up on these lines can suddenly discharge into the gate of the transistor, which causes gate oxide breakdown => broken transistor => broken chip.
 
-      ![antenna_effect](./Lab_5_assets_rewrite/antenna_effect.gif)
+      ![antenna_effect](./assets_lab5/antenna_effect.gif)
     * Antenna diodes are reverse biased diodes that leak charge to ground to prevent the charge from going into the transistor's gate.
         * This results in higher parasitic capacitance (resulting in a slower circuit) and higher leakage power (higher static power) on that net.
 
-        ![antenna_diode_insertion](./Lab_5_assets_rewrite/antenna_diode_insertion.gif)
+        ![antenna_diode_insertion](./assets_lab5/antenna_diode_insertion.gif)
 
-        ![antenna_diode_charge_flow](./Lab_5_assets_rewrite/antenna_diode_charge_flow.jpg)
+        ![antenna_diode_charge_flow](./assets_lab5/antenna_diode_charge_flow.jpg)
 * Antenna violations are checked using a physical verification tool (Will discuss more during the DRC section) with a deck that has rules on the maximum allowed ratio between metal-interconnects to gate area allowed ("antenna ratio").
 <!--TODO: LINK DRC SECTION-->
 * Antenna diodes, for the most part, is automatically inserted by Innovus during the Place & Route flow. (See lines 42 & 43) of the TCL in the [Place & Route section](#4-tool-settings)
@@ -334,10 +335,10 @@ The files for these cells are available here: `/home/ff/ee198/ee198-20/sky130_co
 
 * The advantage of this is avoiding the higher parasitic capacitance and leakage power associated with a diode, however, it comes at a cost of potentially more congestion in the upper metal layers of the design & an increase in the number of [Vias](#characterizing-the-entire-processtechnology-technology-lefs) between metal layers placed.
 
-    ![antenna_alt_jumper](./Lab_5_assets_rewrite/antenna_alt_jumper.jpg)
+    ![antenna_alt_jumper](./assets_lab5/antenna_alt_jumper.jpg)
 
 2. Dummy Transistor Insertion: Increase the effective gate area of the transistor by adding a dummy transistor next to the transistor that you originally placed. This decreases the ratio between metal-interconnects to gate area. The downsides of this is quite obvious: more dummy transistors = less area for useful logic + more power consumed.
-    ![antenna_alt_dummy_transistor](./Lab_5_assets_rewrite/antenna_alt_dummy_transistor.jpg)
+    ![antenna_alt_dummy_transistor](./assets_lab5/antenna_alt_dummy_transistor.jpg)
 </details>
 
 
@@ -349,7 +350,7 @@ The files for these cells are available here: `/home/ff/ee198/ee198-20/sky130_co
 * A design without fillers will likely result in (DRC) errors. Particularly if you fail to place fillers, it'll likely result in a `nwell minimum spacing not met` DRC violation. This is because of the Well Proximity Effect.
     * The result of the Well Proximity Effect is that doping level at the edges of [nwells](#skywater-130nm-stackup) tends to be different than the doping level at the middle of the nwell. This means, for consistency, we want to have as large of a nwell as possible, which is created through having devices sit right next to each other. ([More Information](https://analoghub.ie/category/Layout/article/layoutDependentEffects#WPE))
 
-        <img src="./Lab_5_assets_rewrite/Well_Proximity_Effect.jpg">
+        <img src="./assets_lab5/Well_Proximity_Effect.jpg">
 
     * Having gaps in your design (due to a lack of filler cells) will result in chunks of different nwells throughout the design, which results in more devices sitting at the edge of nwells, and more devices suffering from this doping inconsistency.
    * It's also a headache for the fabrication house...
@@ -358,10 +359,10 @@ The files for these cells are available here: `/home/ff/ee198/ee198-20/sky130_co
 * NOTE: You might hear about a fill script or metal fill later in the signoff stage. Fill cells are not the same as this fill script or metal fill.
 
 Design with Fill Cells:
-![](./Lab_5_assets_rewrite/fill_cell_in_design_example.png)
+![](./assets_lab5/fill_cell_in_design_example.png)
 
 Design without Fill Cells:
-![](./Lab_5_assets_rewrite/fill_cell_not_in_design_example.png)
+![](./assets_lab5/fill_cell_not_in_design_example.png)
 
 #### **Tie Cells:**
 * Special purpose cells that outputs either high (TIEHI) or low (TIELO).
@@ -372,7 +373,7 @@ Design without Fill Cells:
 * Tap cells are cells with no logic but they tie nwell to VDD and p-substrate to VSS.
 * Without tap cells, a design can suffer from Latch Up, where a short-circuit is formed between the power supply rails, and once formed, it'll continue to short circuit in a positive feedback loop until device shutdown. Here's an example:
 
-<img src="./Lab_5_assets_rewrite/latchup.jpg">
+<img src="./assets_lab5/latchup.jpg">
 Let's take this inverter as an example. The Parasitic BJT structure is created and once $R_{NWELL}$ and $R_{sub} = R_{substrate}$ create enough voltage drop during a trigger event, the parasitic BJT structure turns on, then feedsback into itself, connecting VDD with ground until there is absolutely no current flowing through it -- which typically doesn't happen until the device is fully powered down. 
 
 [More Information](https://analoghub.ie/category/Layout/article/layoutDependentEffects#Latchup)
@@ -383,16 +384,16 @@ Some older Standard Cells have tap cells integrated into its logic standard cell
 * An additional set of (DRC) rules checks for latch-up compliance and tap cells are inserted as needed to resolve these violations. (Will discuss more during the DRC section).
 <!--TODO: LINK DRC SECTION-->
 
-<img src="./Lab_5_assets_rewrite/TaplessCell_vs_TapBuiltinCell.png">
+<img src="./assets_lab5/TaplessCell_vs_TapBuiltinCell.png">
 
 The Cadence SkyWater 130nm Standard Cells (SKY130_SCL) has built in tap cells in its logic standard cells.
 
 #### **Power on Reset:**
 * A block that generates a reset signal that propagates through the entire chip so everything is set to a predefined state. It is essentially a giant RC network:
 
-<img src="./Lab_5_assets_rewrite/power-on-reset-signal-vs-vcc-ramp-up.png" width="400px">
+<img src="./assets_lab5/power-on-reset-signal-vs-vcc-ramp-up.png" width="400px">
     
-<img src="./Lab_5_assets_rewrite/PoR_innovus.png" width="1200px">
+<img src="./assets_lab5/PoR_innovus.png" width="1200px">
 A PoR doesn't necessarily connect to all standard cells - Remember they don't have a reset signal! In this case it connects to almost all the IO Cells to reset inputs to our chip to a known state.
 
 
@@ -718,11 +719,11 @@ However, it is not a great idea to have our I/O cells directly touching each oth
 
 1. Overview of our entire chip/"die" (just to give you some context -- this view should be familiar to you already from EECS151 ASIC Lab 4)
 
-<img src="./Lab_5_assets_rewrite/par-io-fillers-chip-overview.png" height="500px">
+<img src="./assets_lab5/par-io-fillers-chip-overview.png" height="500px">
 
 2. If you look towards the left of the photo & we zoom in, you can see the IO cells and IO fillers and how they fit together:
 
-<img src="./Lab_5_assets_rewrite/par-io-fillers.png" height="500px">
+<img src="./assets_lab5/par-io-fillers.png" height="500px">
 
 
 \*: Electrically speaking, it makes keeping the circuitary of each IO cell separate a lot more difficult, and this may result in unintended shorts, unintended crossing of power domains, etc. From a physical perspective, having each IO port be so close to the other ones can cause problems/difficulty when we attempt to connect wires to the chip to interact with the other components off chip. We'll discuss more how exactly our chip is connected with components off chip in the [die area, io rings, available area, packaging overview] section.
@@ -732,11 +733,11 @@ We then draw a ring around our chip, between the actual wires/logic and our IO c
 
 Conceptual photo, the ring that is labeled "Rings" is what this step of P&R draws:
 
-<img src="./Lab_5_assets_rewrite/par-core-ring-concept.png">
+<img src="./assets_lab5/par-core-ring-concept.png">
 
 Here is a photo from an actual SkyWater 130nm design that shows the Core Ring, how power is fed into it and how power is drawn from it for the rest of the chip's logic:
 
-<img src="./Lab_5_assets_rewrite/par-core-ring-practical.png">
+<img src="./assets_lab5/par-core-ring-practical.png">
 
 ### 8. Draw power straps
 In the previous step we drew the power ring, which are the sources of power and ground for all the standard cells in the design. However, drawing wires to every cell from the ring would cause voltage drop (IR Drop) which cause voltage droop and ground bounce leading to timing violations and noise in the power supply signals. To prevent this, we place horizontal and vertical straps across the rings(in a mesh/grid pattern) to distribute power and ground evenly and minimize the effects of IR Drop. Using Hammer, power straps are generated given user parameters in the .yml configuration of the technology(this case sky130.yml). The commands for Innovus to create the power straps is found it its own TCL file called power_straps.tcl which specifies the metal layers, spacing, and width of the straps, etc.  
@@ -830,8 +831,9 @@ As mentioned before, filler cells are essential to the manufacturability to prev
 The final design is exported in a GDS(or GDSII) file format which is a graphical representation of the chip with all the standard cells, wires, vias, etc stacked on top of each other on different metal and via layers as seen on the stackup. This is the file that is distributed to the foundry to be manufactured as it acts as the blue print of the chip. While receiving the GDS may seem like the end of physical design, it is necessary to undergo more stages of physical verification to be certain that the final design is manufacturable and logically accurate. This includes the process of Design Rule Checking(DRC) and Layout Versus Schematic(LVS) analysis to later signoff and send the finalized GDS on the shuttle. 
 
 
-## DRC
+## DRC & LVS
 
+It is common practice to make a slide deck as you start physical design to document the DRC/LVS errors you find. This both allows you to share your work with others and remind yourself of what you did when you inadvertedly forget. For now, we won't worry about DRC/LVS, but you'll definitely need them if you want to tapeout.
 
+# Actionables 
 
-## LVS
