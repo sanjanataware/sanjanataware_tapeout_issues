@@ -853,6 +853,6 @@ make par ./build/par-rundir/generated_scripts/open_chip
 
 Then open Innovus and take a screenshot. That's it, you have your first design draft! 
 If you wish to continue designing - you will need to do this many times again - and then fix the errors that pop up. 
-But for now, just submit the screenshot on Gradescope. :)  
+But for now, just **submit the screenshot on Gradescope**. :)  
 
 **Congratulations!~**
