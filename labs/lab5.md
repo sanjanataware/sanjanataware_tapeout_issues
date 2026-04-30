@@ -847,8 +847,9 @@ git pull origin main
 cd generators/riscv-sodor 
 git checkout srams 
 cd ../../vlsi 
-make syn ./build/par-rundir/generated_scripts/open_chip
-make par ./build/par-rundir/generated_scripts/open_chip
+make syn
+make par 
+./build/par-rundir/generated_scripts/open_chip
 ```
 
 Then open Innovus and take a screenshot. That's it, you have your first design draft! 
