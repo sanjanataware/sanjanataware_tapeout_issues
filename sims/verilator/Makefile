@@ -82,13 +82,15 @@ ifeq ($(strip $(VERILATOR_CFLAGS)),)
 ifeq ($(strip $(VERILATOR_ROOT)),)
 VERILATOR_ROOT := $(shell verilator -V 2>/dev/null | sed -n 's/^VERILATOR_ROOT *= *//p')
 endif
-
 ifneq ($(wildcard $(VERILATOR_ROOT)/include/vltstd/vpi_user.h),)
 VERILATOR_CFLAGS := -I$(VERILATOR_ROOT)/include -I$(VERILATOR_ROOT)/include/vltstd
-else
-$(error Could not find Verilator headers. Set VERILATOR_ROOT or make pkg-config verilator work.)
 endif
 endif
+
+# Deferred check: only enforced when actually building the emulator, not for 'make rtl'.
+.PHONY: check-verilator
+check-verilator:
+	$(if $(strip $(VERILATOR_CFLAGS)),,$(error Could not find Verilator headers. Set VERILATOR_ROOT or make pkg-config verilator work.))
  
 CXXFLAGS += -O1 -std=c++17 -g
 
@@ -149,12 +151,12 @@ VERILATOR_FLAGS := --top-module Top \
   -I$(srcDir)/vsrc \
   -Mdir $(buildDir)/obj_dir \
   -O3 -CFLAGS "$(CXXFLAGS) $(LDFLAGS) -DVERILATOR -include $(srcDir)/sim/verilator.h"
-emulator: $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
+emulator: check-verilator $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
 	$(VERILATOR) $(VERILATOR_FLAGS) \
 	-o $(buildDir)/$@ $< $(EXTRA_V) $(srcDir)/vsrc/SimDTM.v $(SRAM22_V) -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
 	$(MAKE) -C $(buildDir)/obj_dir -f VTop.mk
 
-emulator-debug: $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
+emulator-debug: check-verilator $(TOP_V) $(EXTRA_V) $(srcDir)/sim/emulator.cpp $(buildDir)/SimDTM.o $(srcDir)/vsrc/AsyncReadMem.sv $(srcDir)/vsrc/SyncMem.sv $(srcDir)/vsrc/SimDTM.v $(SRAM22_V)
 	$(VERILATOR) $(VERILATOR_FLAGS) --trace \
 	-o $(buildDir)/$@ $< $(EXTRA_V) $(srcDir)/vsrc/SimDTM.v $(SRAM22_V) -LDFLAGS "$(LDFLAGS)" $(srcDir)/sim/emulator.cpp $(fesvrDir)/build/libfesvr.so $(buildDir)/SimDTM.o
 	$(MAKE) -C $(buildDir)/obj_dir -f VTop.mk
