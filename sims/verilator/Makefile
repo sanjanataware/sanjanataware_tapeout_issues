@@ -28,7 +28,26 @@ ifneq ($(which_disasm),)
 	disasm_exe := 3>&1 1>&2 2>&3 | $(which_disasm) $(DISASM_EXTENSION) >
 endif
 
+# MK_TARGET_PROC selects which Sodor core variant to elaborate.
+# Each variant maps to an SBT sub-project in generators/riscv-sodor/build.sbt.
+# Only the chosen variant (and the shared 'common' sub-project) is compiled;
+# the other four are never touched by this Makefile.
+#
+# Valid values:
+#   rv32_1stage  – single-cycle ISA simulator (default)
+#   rv32_2stage  – 2-stage pipeline
+#   rv32_3stage  – 3-stage pipeline (sequential memory; Harvard or Princeton)
+#   rv32_5stage  – 5-stage pipeline (bypassed or interlocked)
+#   rv32_ucode   – bus-based microcoded implementation
+#
+# Override on the command line: make MK_TARGET_PROC=rv32_5stage
 MK_TARGET_PROC ?= rv32_1stage
+
+VALID_PROCS := rv32_1stage rv32_2stage rv32_3stage rv32_5stage rv32_ucode
+ifeq ($(filter $(MK_TARGET_PROC),$(VALID_PROCS)),)
+  $(error Unknown MK_TARGET_PROC=$(MK_TARGET_PROC). Valid choices: $(VALID_PROCS))
+endif
+
 SODOR_ASYNC_SIM ?= 0
 
 generated_dir = $(buildDir)/generated-src/${MK_TARGET_PROC}

@@ -73,7 +73,26 @@ all: drc lvs
 #########################################################################################
 # process RTL
 #########################################################################################
+# MK_TARGET_PROC selects which Sodor core variant to elaborate for physical design.
+# Each variant maps to an SBT sub-project in generators/riscv-sodor/build.sbt.
+# Only the chosen variant (and the shared 'common' sub-project) is compiled;
+# the other four are never touched by this Makefile.
+#
+# Valid values:
+#   rv32_1stage  – single-cycle ISA simulator
+#   rv32_2stage  – 2-stage pipeline
+#   rv32_3stage  – 3-stage pipeline (sequential memory; Harvard or Princeton)
+#   rv32_5stage  – 5-stage pipeline (bypassed or interlocked; default for VLSI)
+#   rv32_ucode   – bus-based microcoded implementation
+#
+# Override on the command line: make MK_TARGET_PROC=rv32_1stage
 MK_TARGET_PROC ?= rv32_5stage
+
+VALID_PROCS := rv32_1stage rv32_2stage rv32_3stage rv32_5stage rv32_ucode
+ifeq ($(filter $(MK_TARGET_PROC),$(VALID_PROCS)),)
+  $(error Unknown MK_TARGET_PROC=$(MK_TARGET_PROC). Valid choices: $(VALID_PROCS))
+endif
+
 RTL_TARGET_DIR = $(vlsi_dir)/build/$(MK_TARGET_PROC)-rtl
 SODOR_TOP_V = $(RTL_TARGET_DIR)/Top.v
 SODOR_VSRCS = $(wildcard $(base_dir)/generators/riscv-sodor/vsrc/*.sv) \
