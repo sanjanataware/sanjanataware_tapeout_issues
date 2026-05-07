@@ -39,8 +39,10 @@ This syntax explicitly selects ONE sub-project before running. SBT then:
    calls `chisel3.Driver.execute` and writes a single `Top.v` to the output directory.
 
 **No other core variant is compiled or elaborated.** The other four sub-projects are never
-touched. SBT may create their base directories (e.g., `rv32_1stage/`) as part of project
-resolution, but they contain at most an empty `target/` folder and can be ignored.
+touched. SBT does create empty base directories for all sub-projects (e.g., `rv32_2stage/`,
+`rv32_5stage/`) as part of loading `build.sbt` — confirmed by running `make rtl` targeting
+`rv32_1stage` and observing that `rv32_2stage/` and `rv32_5stage/` were created but are
+completely empty. This is purely aesthetic; there are no compiled artifacts in them.
 
 ### How to control which core gets generated
 
